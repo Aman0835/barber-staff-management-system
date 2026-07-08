@@ -1,51 +1,166 @@
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import { Attendance } from "../models/Attendance.js";
-import { Employee } from "../models/Employee.js";
-import { LeaveRequest } from "../models/LeaveRequest.js";
-import { Payroll } from "../models/Payroll.js";
-import { sendResponse } from "../utils/response.js";
+import Attendance from "../models/Attendance.js";
+import Employee from "../models/Employee.js";
+import LeaveRequest from "../models/LeaveRequest.js";
+import Payroll from "../models/Payroll.js";
 
-export const getAttendanceReportData = asyncHandler(async (_req, res) => {
-  const data = await Attendance.find().sort({ date: -1 });
-  sendResponse(res, 200, "Attendance report fetched", data);
-});
 
-export const getPayrollReportData = asyncHandler(async (_req, res) => {
-  const data = await Payroll.find().sort({ year: -1, month: -1 });
-  sendResponse(res, 200, "Payroll report fetched", data);
-});
+// Attendance Report
 
-export const getLeavesReportData = asyncHandler(async (_req, res) => {
-  const data = await LeaveRequest.find().sort({ createdAt: -1 });
-  sendResponse(res, 200, "Leave report fetched", data);
-});
+export const getAttendanceReport = async (req, res) => {
+  try {
+    const attendance = await Attendance.find().sort({
+      date: -1,
+    });
 
-export const getEmployeesReportData = asyncHandler(async (_req, res) => {
-  const data = await Employee.find().sort({ createdAt: -1 });
-  sendResponse(res, 200, "Employee report fetched", data);
-});
+    res.status(200).json({
+      success: true,
+      count: attendance.length,
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
 
-export const getMonthlyReportData = asyncHandler(async (req, res) => {
-  const month = Number(req.query.month);
-  const year = Number(req.query.year);
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
-  const [attendance, payrolls, leaves] = await Promise.all([
-    Attendance.find(month && year ? { date: new RegExp(`^${year}-(0?${month}|${month})`) } : {}),
-    Payroll.find(month && year ? { month, year } : {}),
-    LeaveRequest.find()
-  ]);
 
-  sendResponse(res, 200, "Monthly report fetched", {
-    month: month || null,
-    year: year || null,
-    attendance,
-    payrolls,
-    leaves
-  });
-});
+// Payroll Report
 
-export const getCustomReportData = asyncHandler(async (req, res) => {
-  sendResponse(res, 200, "Custom report filters received", {
-    filters: req.query
-  });
-});
+export const getPayrollReport = async (req, res) => {
+  try {
+    const payrolls = await Payroll.find().sort({
+      year: -1,
+      month: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: payrolls.length,
+      data: payrolls,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Leave Report
+
+export const getLeaveReport = async (req, res) => {
+  try {
+    const leaves = await LeaveRequest.find().sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: leaves.length,
+      data: leaves,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Employee Report
+
+export const getEmployeeReport = async (req, res) => {
+  try {
+    const employees = await Employee.find().sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: employees.length,
+      data: employees,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Monthly Report
+
+export const getMonthlyReport = async (req, res) => {
+  try {
+    const { month, year } = req.query;
+
+    const attendance = await Attendance.find(
+      month && year
+        ? {
+            date: new RegExp(`^${year}-(0?${month}|${month})`),
+          }
+        : {}
+    );
+
+    const payrolls = await Payroll.find(
+      month && year
+        ? {
+            month: Number(month),
+            year: Number(year),
+          }
+        : {}
+    );
+
+    const leaves = await LeaveRequest.find();
+
+    res.status(200).json({
+      success: true,
+      data: {
+        month: month || null,
+        year: year || null,
+        attendance,
+        payrolls,
+        leaves,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Custom Report
+
+export const getCustomReport = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      filters: req.query,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

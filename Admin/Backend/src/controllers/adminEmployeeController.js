@@ -1,68 +1,213 @@
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import { Employee } from "../models/Employee.js";
-import { ApiError } from "../utils/apiError.js";
-import { sendResponse } from "../utils/response.js";
+import Employee from "../models/Employee.js";
 
-export const getEmployees = asyncHandler(async (_req, res) => {
-  const employees = await Employee.find().sort({ createdAt: -1 });
-  sendResponse(res, 200, "Employees fetched", employees);
-});
 
-export const getEmployeeById = asyncHandler(async (req, res) => {
-  const employee = await Employee.findOne({ employeeId: req.params.employeeId });
+// Get All Employees
 
-  if (!employee) {
-    throw new ApiError(404, "Employee not found");
+export const getEmployees = async (req, res) => {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      search = "",
+      status,
+    } = req.query;
+
+    const query = {};
+
+    if (search) {
+      query.$or = [
+        { fullName: { $regex: search, $options: "i" } },
+        { employeeId: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    if (status) {
+      query.status = status;
+    }
+
+    const employees = await Employee.find(query)
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .sort({ createdAt: -1 });
+
+    const totalEmployees = await Employee.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      totalEmployees,
+      page: Number(page),
+      totalPages: Math.ceil(totalEmployees / limit),
+      data: employees,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
-  sendResponse(res, 200, "Employee fetched", employee);
-});
 
-export const createEmployee = asyncHandler(async (req, res) => {
-  const employee = await Employee.create(req.body);
-  sendResponse(res, 201, "Employee created", employee);
-});
+// Update Employee Status
+export const updateEmployeeStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
 
-export const updateEmployee = asyncHandler(async (req, res) => {
-  const employee = await Employee.findOneAndUpdate(
-    { employeeId: req.params.employeeId },
-    req.body,
-    { new: true, runValidators: true }
-  );
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true, runValidators: true }
+    );
 
-  if (!employee) {
-    throw new ApiError(404, "Employee not found");
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Employee status updated successfully",
+      data: employee,
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
-  sendResponse(res, 200, "Employee updated", employee);
-});
 
-export const deleteEmployee = asyncHandler(async (req, res) => {
-  const employee = await Employee.findOneAndDelete({ employeeId: req.params.employeeId });
 
-  if (!employee) {
-    throw new ApiError(404, "Employee not found");
+//get employee by id
+export const getEmployeeById = async (req, res) => {
+  try {
+    const employee = await Employee.findById(req.params.id);
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: employee,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
-  sendResponse(res, 200, "Employee deleted", employee);
-});
 
-export const updateEmployeeStatus = asyncHandler(async (req, res) => {
-  const { status } = req.body;
+// Create Employee
 
-  if (!status) {
-    throw new ApiError(400, "Status is required");
+export const createEmployee = async (req, res) => {
+  try {
+
+    const employee = await Employee.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Employee created successfully",
+      data: employee,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
   }
+};
 
-  const employee = await Employee.findOneAndUpdate(
-    { employeeId: req.params.employeeId },
-    { status },
-    { new: true, runValidators: true }
-  );
+// ======================================
+// Update Employee
+// ======================================
+export const updateEmployee = async (req, res) => {
+  try {
 
-  if (!employee) {
-    throw new ApiError(404, "Employee not found");
+    const employee = await Employee.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Employee updated successfully",
+      data: employee,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
   }
+};
 
-  sendResponse(res, 200, "Employee status updated", employee);
-});
+// ======================================
+// Delete Employee
+// ======================================
+export const deleteEmployee = async (req, res) => {
+  try {
+
+    const employee = await Employee.findByIdAndDelete(req.params.id);
+
+    if (!employee) {
+      return res.status(404).json({
+        success: false,
+        message: "Employee not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Employee deleted successfully",
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+
+  }
+};

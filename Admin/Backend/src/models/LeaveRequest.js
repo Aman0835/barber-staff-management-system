@@ -34,4 +34,6 @@ const leaveRequestSchema = new mongoose.Schema(
   }
 );
 
-export const LeaveRequest = mongoose.model("LeaveRequest", leaveRequestSchema);
+const LeaveRequest = mongoose.model("LeaveRequest", leaveRequestSchema);
+
+export default LeaveRequest;

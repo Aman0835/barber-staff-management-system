@@ -21,4 +21,6 @@ const holidaySchema = new mongoose.Schema(
   }
 );
 
-export const Holiday = mongoose.model("Holiday", holidaySchema);
+const Holiday = mongoose.model("Holiday", holidaySchema);
+
+export default Holiday;

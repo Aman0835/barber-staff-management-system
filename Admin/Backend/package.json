@@ -2,19 +2,23 @@
   "name": "barbershop-admin-backend",
   "version": "1.0.0",
   "description": "Admin dashboard backend for the barber shop employee management system.",
-  "main": "src/server.js",
+  "main": "./src/app.js",
   "type": "module",
   "scripts": {
-    "dev": "node --watch src/server.js",
-    "start": "node src/server.js",
-    "seed:admin": "node src/scripts/seedAdmin.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/app.js",
+    "start": "node ./src/app.js"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.5.1",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "validator": "^13.15.35"
   }
 }

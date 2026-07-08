@@ -44,4 +44,6 @@ const payrollSchema = new mongoose.Schema(
 
 payrollSchema.index({ employeeId: 1, month: 1, year: 1 }, { unique: true });
 
-export const Payroll = mongoose.model("Payroll", payrollSchema);
+const Payroll = mongoose.model("Payroll", payrollSchema);
+
+export default Payroll;

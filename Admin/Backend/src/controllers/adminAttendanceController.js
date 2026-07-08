@@ -1,58 +1,284 @@
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import { Attendance } from "../models/Attendance.js";
-import { ApiError } from "../utils/apiError.js";
-import { sendResponse } from "../utils/response.js";
+import Attendance from "../models/Attendance.js";
 
-export const getAttendanceList = asyncHandler(async (_req, res) => {
-  const attendance = await Attendance.find().sort({ date: -1, createdAt: -1 });
-  sendResponse(res, 200, "Attendance list fetched", attendance);
-});
 
-export const getAttendanceByEmployee = asyncHandler(async (req, res) => {
-  const attendance = await Attendance.find({ employeeId: req.params.employeeId }).sort({ date: -1 });
-  sendResponse(res, 200, "Employee attendance fetched", attendance);
-});
+// Create Attendance
 
-export const getAttendanceByDate = asyncHandler(async (req, res) => {
-  const attendance = await Attendance.find({ date: req.params.date }).sort({ employeeId: 1 });
-  sendResponse(res, 200, "Attendance by date fetched", attendance);
-});
+export const createAttendance = async (req, res) => {
+  try {
+    const attendance = await Attendance.create(req.body);
 
-export const getAttendanceReport = asyncHandler(async (_req, res) => {
-  const report = await Attendance.aggregate([
-    {
-      $group: {
-        _id: "$employeeId",
-        totalDays: { $sum: 1 },
-        totalWorkingHours: { $sum: "$workingHours" },
-        totalOvertime: { $sum: "$overtime" }
+    res.status(201).json({
+      success: true,
+      message: "Attendance created successfully",
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Check In
+
+export const checkIn = async (req, res) => {
+  try {
+    const { employeeId } = req.body;
+
+    const today = new Date().toISOString().split("T")[0];
+
+    let attendance = await Attendance.findOne({
+      employeeId,
+      date: today,
+    });
+
+    if (attendance) {
+      return res.status(400).json({
+        success: false,
+        message: "Already checked in today",
+      });
+    }
+
+    attendance = await Attendance.create({
+      employeeId,
+      date: today,
+      checkIn: new Date(),
+      status: "present",
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Check In Successful",
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Check Out
+
+export const checkOut = async (req, res) => {
+  try {
+    const { employeeId } = req.body;
+
+    const today = new Date().toISOString().split("T")[0];
+
+    const attendance = await Attendance.findOne({
+      employeeId,
+      date: today,
+    });
+
+    if (!attendance) {
+      return res.status(404).json({
+        success: false,
+        message: "Attendance not found",
+      });
+    }
+
+    attendance.checkOut = new Date();
+
+    attendance.workingHours =
+      (attendance.checkOut - attendance.checkIn) /
+      (1000 * 60 * 60);
+
+    await attendance.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Check Out Successful",
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Get All Attendance
+
+export const getAttendanceList = async (req, res) => {
+  try {
+    const attendance = await Attendance.find().sort({
+      date: -1,
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: attendance.length,
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Get Attendance By Employee
+
+export const getAttendanceByEmployee = async (req, res) => {
+  try {
+    const attendance = await Attendance.find({
+      employeeId: req.params.employeeId,
+    }).sort({
+      date: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: attendance.length,
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Get Today's Attendance
+
+export const getTodayAttendance = async (req, res) => {
+  try {
+    const today = new Date().toISOString().split("T")[0];
+
+    const attendance = await Attendance.find({
+      date: today,
+    }).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: attendance.length,
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+//get Attendance Report
+
+export const getAttendanceReport = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    const attendance = await Attendance.find({
+      date: {
+        $gte: new Date(startDate),
+        $lte: new Date(endDate),
+      },
+    }).sort({
+      date: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: attendance.length,
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Update Attendance
+
+export const updateAttendance = async (req, res) => {
+  try {
+    const attendance = await Attendance.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
       }
-    },
-    { $sort: { _id: 1 } }
-  ]);
+    );
 
-  sendResponse(res, 200, "Attendance report fetched", report);
-});
+    if (!attendance) {
+      return res.status(404).json({
+        success: false,
+        message: "Attendance not found",
+      });
+    }
 
-export const updateAttendance = asyncHandler(async (req, res) => {
-  const attendance = await Attendance.findByIdAndUpdate(req.params.attendanceId, req.body, {
-    new: true,
-    runValidators: true
-  });
+    res.status(200).json({
+      success: true,
+      message: "Attendance updated",
+      data: attendance,
+    });
+  } catch (error) {
+    console.error(error);
 
-  if (!attendance) {
-    throw new ApiError(404, "Attendance record not found");
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
-  sendResponse(res, 200, "Attendance updated", attendance);
-});
 
-export const deleteAttendance = asyncHandler(async (req, res) => {
-  const attendance = await Attendance.findByIdAndDelete(req.params.attendanceId);
+// Delete Attendance
 
-  if (!attendance) {
-    throw new ApiError(404, "Attendance record not found");
+export const deleteAttendance = async (req, res) => {
+  try {
+    const attendance = await Attendance.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!attendance) {
+      return res.status(404).json({
+        success: false,
+        message: "Attendance not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Attendance deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
-
-  sendResponse(res, 200, "Attendance deleted", attendance);
-});
+};

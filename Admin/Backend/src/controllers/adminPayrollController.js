@@ -1,76 +1,232 @@
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import { Employee } from "../models/Employee.js";
-import { Payroll } from "../models/Payroll.js";
-import { ApiError } from "../utils/apiError.js";
-import { sendResponse } from "../utils/response.js";
+import  Employee  from "../models/Employee.js";
+import Payroll from "../models/Payroll.js";
 
-export const generatePayroll = asyncHandler(async (req, res) => {
-  const { month, year } = req.body;
 
-  if (!month || !year) {
-    throw new ApiError(400, "Month and year are required");
+// Generate Payroll
+
+export const generatePayroll = async (req, res) => {
+  try {
+    const { month, year } = req.body;
+
+    if (!month || !year) {
+      return res.status(400).json({
+        success: false,
+        message: "Month and Year are required",
+      });
+    }
+
+    const employees = await Employee.find();
+
+    const payrolls = [];
+
+    for (const employee of employees) {
+      const payroll = await Payroll.findOneAndUpdate(
+        {
+          employeeId: employee.employeeId,
+          month,
+          year,
+        },
+        {
+          employeeId: employee.employeeId,
+          month,
+          year,
+          baseSalary: employee.monthlySalary,
+          netSalary: employee.monthlySalary,
+          status: "generated",
+        },
+        {
+          new: true,
+          upsert: true,
+          setDefaultsOnInsert: true,
+        }
+      );
+
+      payrolls.push(payroll);
+    }
+
+    res.status(201).json({
+      success: true,
+      message: "Payroll generated successfully",
+      count: payrolls.length,
+      data: payrolls,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
-  const employees = await Employee.find();
-  const generatedPayrolls = [];
 
-  for (const employee of employees) {
-    const baseSalary = employee.monthlySalary || 0;
-    const payroll = await Payroll.findOneAndUpdate(
+// Get All Payrolls
+
+export const getPayrolls = async (req, res) => {
+  try {
+    const payrolls = await Payroll.find().sort({
+      year: -1,
+      month: -1,
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: payrolls.length,
+      data: payrolls,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Get Payroll By Employee
+
+export const getPayrollByEmployee = async (req, res) => {
+  try {
+    const payrolls = await Payroll.find({
+      employeeId: req.params.employeeId,
+    }).sort({
+      year: -1,
+      month: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: payrolls.length,
+      data: payrolls,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Get Payroll By Month & Year
+
+export const getPayrollByMonthYear = async (req, res) => {
+  try {
+    const payrolls = await Payroll.find({
+      month: Number(req.params.month),
+      year: Number(req.params.year),
+    }).sort({
+      employeeId: 1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: payrolls.length,
+      data: payrolls,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Get Payroll By ID
+
+export const getPayrollById = async (req, res) => {
+  try {
+    const payroll = await Payroll.findById(req.params.id);
+
+    if (!payroll) {
+      return res.status(404).json({
+        success: false,
+        message: "Payroll record not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: payroll,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+// Update Payroll
+
+export const updatePayroll = async (req, res) => {
+  try {
+    const payroll = await Payroll.findByIdAndUpdate(
+      req.params.id,
+      req.body,
       {
-        employeeId: employee.employeeId,
-        month,
-        year
-      },
-      {
-        employeeId: employee.employeeId,
-        month,
-        year,
-        baseSalary,
-        netSalary: baseSalary,
-        status: "generated"
-      },
-      {
-        upsert: true,
         new: true,
-        setDefaultsOnInsert: true
+        runValidators: true,
       }
     );
 
-    generatedPayrolls.push(payroll);
+    if (!payroll) {
+      return res.status(404).json({
+        success: false,
+        message: "Payroll record not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Payroll updated successfully",
+      data: payroll,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
-  sendResponse(res, 201, "Payroll generated", generatedPayrolls);
-});
 
-export const getPayrolls = asyncHandler(async (_req, res) => {
-  const payrolls = await Payroll.find().sort({ year: -1, month: -1, createdAt: -1 });
-  sendResponse(res, 200, "Payroll records fetched", payrolls);
-});
+// Delete Payroll
 
-export const getPayrollByEmployee = asyncHandler(async (req, res) => {
-  const payrolls = await Payroll.find({ employeeId: req.params.employeeId }).sort({ year: -1, month: -1 });
-  sendResponse(res, 200, "Employee payroll fetched", payrolls);
-});
+export const deletePayroll = async (req, res) => {
+  try {
+    const payroll = await Payroll.findByIdAndDelete(req.params.id);
 
-export const getPayrollByMonthYear = asyncHandler(async (req, res) => {
-  const payrolls = await Payroll.find({
-    month: Number(req.params.month),
-    year: Number(req.params.year)
-  }).sort({ employeeId: 1 });
+    if (!payroll) {
+      return res.status(404).json({
+        success: false,
+        message: "Payroll record not found",
+      });
+    }
 
-  sendResponse(res, 200, "Monthly payroll fetched", payrolls);
-});
+    res.status(200).json({
+      success: true,
+      message: "Payroll deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
 
-export const updatePayroll = asyncHandler(async (req, res) => {
-  const payroll = await Payroll.findByIdAndUpdate(req.params.payrollId, req.body, {
-    new: true,
-    runValidators: true
-  });
-
-  if (!payroll) {
-    throw new ApiError(404, "Payroll record not found");
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
-
-  sendResponse(res, 200, "Payroll updated", payroll);
-});
+};

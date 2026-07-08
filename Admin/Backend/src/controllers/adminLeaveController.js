@@ -1,53 +1,219 @@
-import { asyncHandler } from "../middleware/asyncHandler.js";
-import { LeaveRequest } from "../models/LeaveRequest.js";
-import { ApiError } from "../utils/apiError.js";
-import { sendResponse } from "../utils/response.js";
+import LeaveRequest from "../models/LeaveRequest.js";
 
-export const getLeaves = asyncHandler(async (_req, res) => {
-  const leaves = await LeaveRequest.find().sort({ createdAt: -1 });
-  sendResponse(res, 200, "Leave requests fetched", leaves);
-});
 
-export const getLeaveById = asyncHandler(async (req, res) => {
-  const leave = await LeaveRequest.findById(req.params.leaveId);
+// Get All Leave Requests
 
-  if (!leave) {
-    throw new ApiError(404, "Leave request not found");
+export const getLeaves = async (req, res) => {
+  try {
+    const leaves = await LeaveRequest.find().sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({
+      success: true,
+      count: leaves.length,
+      data: leaves,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
-
-  sendResponse(res, 200, "Leave request fetched", leave);
-});
-
-const updateLeaveStatus = async (leaveId, status, approvedBy) => {
-  const leave = await LeaveRequest.findByIdAndUpdate(
-    leaveId,
-    { status, approvedBy },
-    { new: true, runValidators: true }
-  );
-
-  if (!leave) {
-    throw new ApiError(404, "Leave request not found");
-  }
-
-  return leave;
 };
 
-export const approveLeave = asyncHandler(async (req, res) => {
-  const leave = await updateLeaveStatus(req.params.leaveId, "approved", req.body.approvedBy || "admin");
-  sendResponse(res, 200, "Leave approved", leave);
-});
 
-export const rejectLeave = asyncHandler(async (req, res) => {
-  const leave = await updateLeaveStatus(req.params.leaveId, "rejected", req.body.approvedBy || "admin");
-  sendResponse(res, 200, "Leave rejected", leave);
-});
+// Get Leave By ID
 
-export const deleteLeave = asyncHandler(async (req, res) => {
-  const leave = await LeaveRequest.findByIdAndDelete(req.params.leaveId);
+export const getLeaveById = async (req, res) => {
+  try {
+    const leave = await LeaveRequest.findById(req.params.id);
 
-  if (!leave) {
-    throw new ApiError(404, "Leave request not found");
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: leave,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
+};
 
-  sendResponse(res, 200, "Leave deleted", leave);
-});
+
+// Create Leave Request
+
+export const createLeave = async (req, res) => {
+  try {
+    const leave = await LeaveRequest.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      message: "Leave request created successfully",
+      data: leave,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Approve Leave
+
+export const approveLeave = async (req, res) => {
+  try {
+    const leave = await LeaveRequest.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "approved",
+        approvedBy: req.body.approvedBy || "admin",
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Leave approved successfully",
+      data: leave,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Reject Leave
+
+export const rejectLeave = async (req, res) => {
+  try {
+    const leave = await LeaveRequest.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "rejected",
+        approvedBy: req.body.approvedBy || "admin",
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Leave rejected successfully",
+      data: leave,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Update Leave
+
+export const updateLeave = async (req, res) => {
+  try {
+    const leave = await LeaveRequest.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Leave updated successfully",
+      data: leave,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+
+// Delete Leave
+
+export const deleteLeave = async (req, res) => {
+  try {
+    const leave = await LeaveRequest.findByIdAndDelete(
+      req.params.id
+    );
+
+    if (!leave) {
+      return res.status(404).json({
+        success: false,
+        message: "Leave request not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Leave deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
