@@ -17,7 +17,7 @@ const extractToken = (req) => {
 };
 
 // Login
-router.post("/login", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -59,7 +59,7 @@ router.post("/login", async (req, res) => {
 });
 
 // Current Admin — accepts Authorization header OR cookie
-router.get("/me", (req, res) => {
+router.get("/", (req, res) => {
   try {
     const token = extractToken(req);
 
@@ -75,7 +75,7 @@ router.get("/me", (req, res) => {
 });
 
 // Logout
-router.post("/logout", (req, res) => {
+router.delete("/", (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: true,
