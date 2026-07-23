@@ -85,7 +85,7 @@ export function useDashboard() {
             hoverShadow: "hover:shadow-[0_8px_30px_rgba(239,68,68,0.06)]", glowColor: "bg-red-500/5",
         },
         {
-            label: "Monthly Payroll", value: netPayrollSum > 0 ? `$${netPayrollSum.toLocaleString()}` : "$0",
+            label: "Monthly Payroll", value: netPayrollSum > 0 ? `₹${netPayrollSum.toLocaleString()}` : "₹0",
             subtext: "Calculated releases", growth: "+3.4%", icon: FiDollarSign, path: "/payroll",
             iconBg: "bg-purple-50 text-purple-600 border border-purple-100 dark:bg-purple-950/20 dark:text-purple-400 dark:border-purple-900/30",
             hoverShadow: "hover:shadow-[0_8px_30px_rgba(168,85,247,0.06)]", glowColor: "bg-purple-500/5",

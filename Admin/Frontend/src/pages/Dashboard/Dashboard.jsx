@@ -143,7 +143,7 @@ export default function Dashboard() {
         },
         {
             label: "Monthly Payroll",
-            value: netPayrollSum > 0 ? `$${netPayrollSum.toLocaleString()}` : "$0",
+            value: netPayrollSum > 0 ? `₹${netPayrollSum.toLocaleString()}` : "₹0",
             subtext: "Calculated releases",
             growth: "+3.4%",
             icon: FiDollarSign,

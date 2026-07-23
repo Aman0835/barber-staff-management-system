@@ -4,7 +4,7 @@ import DashboardLayout from "../../components/layout/DashboardLayout";
 import { useDashboard } from "../Dashboard/hooks/useDashboard";
 
 function formatMoney(value) {
-    return `$${Number(value ?? 0).toLocaleString()}`;
+    return `₹${Number(value ?? 0).toLocaleString()}`;
 }
 
 function formatMonthYear(month, year) {

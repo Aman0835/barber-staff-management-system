@@ -32,8 +32,8 @@ function formatHourMinutes(totalHours = 0) {
 }
 
 function formatMoney(value) {
-    if (!value) return "$0.0k";
-    return `$${(Number(value) / 1000).toFixed(1)}k`;
+    if (!value) return "₹0.0k";
+    return `₹${(Number(value) / 1000).toFixed(1)}k`;
 }
 
 function formatDateLabel(value = new Date()) {

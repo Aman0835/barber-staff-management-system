@@ -63,7 +63,7 @@ export default function EmployeeFormModal({
                                 <div>
                                     <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Phone Number</label>
                                     <div className="relative mt-1.5 flex items-center">
-                                        <span className="absolute left-3.5 text-xs font-bold text-slate-450 dark:text-slate-500 select-none">+91</span>
+                                        <span className="absolute left-3.5 text-xs font-bold text-slate-455 dark:text-slate-500 select-none">+91</span>
                                         <input type="tel" required autoComplete="off" maxLength={10} value={phone}
                                             onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))} placeholder="98765 43210"
                                             className="w-full h-10 pl-11 pr-3 rounded-xl border border-slate-200 bg-slate-50 text-xs outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150" />
@@ -91,8 +91,8 @@ export default function EmployeeFormModal({
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Monthly Base Salary ($)</label>
-                                    <input type="number" required value={monthlySalary} onChange={(e) => setMonthlySalary(e.target.value)} placeholder="4500"
+                                    <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Monthly Base Salary (₹)</label>
+                                    <input type="number" required value={monthlySalary} onChange={(e) => setMonthlySalary(e.target.value)} placeholder="25000"
                                         className="w-full h-10 mt-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150" />
                                 </div>
                             </div>
@@ -184,7 +184,7 @@ export default function EmployeeFormModal({
                             <div>
                                 <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Home Address</label>
                                 <input type="text" autoComplete="off" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Downtown Chair 01, Barber Shop lounge"
-                                    className="w-full h-10 mt-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150" />
+                                    className="w-full h-10 mt-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-855 dark:text-slate-150" />
                             </div>
 
                             <button type="submit" className="w-full h-11 mt-6 rounded-xl bg-blue-600 text-xs font-semibold text-white hover:bg-blue-700 transition shadow-sm">

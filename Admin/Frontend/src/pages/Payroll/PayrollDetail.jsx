@@ -194,27 +194,27 @@ export default function PayrollDetail() {
                                         <tbody>
                                             <tr>
                                                 <td>Basic Salary</td>
-                                                <td class="val">$${basicPay.toLocaleString()}</td>
+                                                <td class="val">₹${basicPay.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>HRA (House Rent Allowance)</td>
-                                                <td class="val">$${hra.toLocaleString()}</td>
+                                                <td class="val">₹${hra.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>Medical Allowance</td>
-                                                <td class="val">$${medical.toLocaleString()}</td>
+                                                <td class="val">₹${medical.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>Travel Allowance</td>
-                                                <td class="val">$${travel.toLocaleString()}</td>
+                                                <td class="val">₹${travel.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>Overtime Allowance</td>
-                                                <td class="val plus">+$${payroll.overtimeAmount.toLocaleString()}</td>
+                                                <td class="val plus">+₹${payroll.overtimeAmount.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>Other Allowance</td>
-                                                <td class="val">$${otherAllow.toLocaleString()}</td>
+                                                <td class="val">₹${otherAllow.toLocaleString()}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -231,19 +231,19 @@ export default function PayrollDetail() {
                                         <tbody>
                                             <tr>
                                                 <td>Provident Fund</td>
-                                                <td class="val minus">-$${pf.toLocaleString()}</td>
+                                                <td class="val minus">-₹${pf.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>Professional Tax</td>
-                                                <td class="val minus">-$${pt.toLocaleString()}</td>
+                                                <td class="val minus">-₹${pt.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>Leave Deduction</td>
-                                                <td class="val minus">-$${leaveDeduction.toLocaleString()}</td>
+                                                <td class="val minus">-₹${leaveDeduction.toLocaleString()}</td>
                                             </tr>
                                             <tr>
                                                 <td>Other Deductions</td>
-                                                <td class="val minus">-$${otherDeduction.toLocaleString()}</td>
+                                                <td class="val minus">-₹${otherDeduction.toLocaleString()}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -254,15 +254,15 @@ export default function PayrollDetail() {
                         <div class="summary-box">
                             <div class="summary-row">
                                 <span>Gross Earnings:</span>
-                                <strong>$${totalEarnings.toLocaleString()}</strong>
+                                <strong>₹${totalEarnings.toLocaleString()}</strong>
                             </div>
                             <div class="summary-row">
                                 <span>Total Deductions:</span>
-                                <strong style="color: #dc2626;">-$${payroll.deductions.toLocaleString()}</strong>
+                                <strong style="color: #dc2626;">-₹${payroll.deductions.toLocaleString()}</strong>
                             </div>
                             <div class="summary-row total">
                                 <span>Net Paid Amount:</span>
-                                <span>$${payroll.netSalary.toLocaleString()}</span>
+                                <span>₹${payroll.netSalary.toLocaleString()}</span>
                             </div>
                         </div>
                         <div class="clear-float"></div>
