@@ -11,16 +11,21 @@ export default function Login() {
     const [form, setForm] = useState({ emailOrId: "", password: "", rememberMe: false });
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
+        setErrorMessage("");
         setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setErrorMessage("");
         if (!form.emailOrId.trim() || !form.password.trim()) {
-            toast.error("Please enter your credentials");
+            const msg = "Please enter both Employee ID/Email and Password";
+            setErrorMessage(msg);
+            toast.error(msg);
             return;
         }
         setLoading(true);
@@ -29,8 +34,10 @@ export default function Login() {
             toast.success("Welcome back!");
             navigate("/dashboard");
         } catch (err) {
-            const msg = err?.response?.data?.message ?? "Login failed. Please try again.";
+            const msg = err?.response?.data?.message || err?.message || "Login failed. Please check your credentials.";
+            setErrorMessage(msg);
             toast.error(msg);
+            // Inputs are preserved in state so user does not need to re-type
         } finally {
             setLoading(false);
         }
@@ -93,7 +100,14 @@ export default function Login() {
                         Enter your Employee ID or email to continue
                     </p>
 
-                    <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+                    {errorMessage && (
+                        <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-3.5 text-xs text-red-600 dark:border-red-900/50 dark:bg-red-950/30 dark:text-red-400 flex items-center gap-2">
+                            <span className="shrink-0 font-bold">⚠️</span>
+                            <span>{errorMessage}</span>
+                        </div>
+                    )}
+
+                    <form onSubmit={handleSubmit} className="mt-6 space-y-5">
                         {/* Email / Employee ID */}
                         <div>
                             <label

@@ -33,12 +33,19 @@ router.post("/login", async (req, res) => {
         });
 
         if (!employee) {
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
+            return res.status(401).json({ success: false, message: "No account found with this Employee ID or Email" });
         }
 
-        const isMatch = await bcrypt.compare(password, employee.password);
+        let isMatch = await bcrypt.compare(password, employee.password);
+        if (!isMatch && password === employee.password) {
+            // Auto-repair legacy unhashed password saved prior to fix
+            employee.password = await bcrypt.hash(password, 12);
+            await employee.save();
+            isMatch = true;
+        }
+
         if (!isMatch) {
-            return res.status(401).json({ success: false, message: "Invalid credentials" });
+            return res.status(401).json({ success: false, message: "Incorrect Password. Please check and try again." });
         }
 
         if (employee.status === "inactive") {
