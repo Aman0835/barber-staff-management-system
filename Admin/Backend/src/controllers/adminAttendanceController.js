@@ -24,11 +24,16 @@ export const createAttendance = async (req, res) => {
 // Check In with Shift Start Time Evaluation
 export const checkIn = async (req, res) => {
   try {
-    const { employeeId } = req.body;
+    const rawId = (req.body.employeeId || "").trim();
+    if (!rawId) {
+      return res.status(400).json({ success: false, message: "Employee ID is required" });
+    }
+
+    const searchRegex = new RegExp(`^${rawId}$`, "i");
     const today = new Date().toISOString().split("T")[0];
 
     let attendance = await Attendance.findOne({
-      employeeId,
+      employeeId: { $regex: searchRegex },
       date: today,
     });
 
@@ -51,7 +56,7 @@ export const checkIn = async (req, res) => {
     const status = now > targetCheckInDate ? "Late" : "Present";
 
     attendance = await Attendance.create({
-      employeeId,
+      employeeId: rawId,
       date: today,
       checkIn: now,
       status,
@@ -83,11 +88,16 @@ export const checkIn = async (req, res) => {
 // Check Out with Standard Working Hours Enforcement & Early Approval Check
 export const checkOut = async (req, res) => {
   try {
-    const { employeeId } = req.body;
+    const rawId = (req.body.employeeId || "").trim();
+    if (!rawId) {
+      return res.status(400).json({ success: false, message: "Employee ID is required" });
+    }
+
+    const searchRegex = new RegExp(`^${rawId}$`, "i");
     const today = new Date().toISOString().split("T")[0];
 
     const attendance = await Attendance.findOne({
-      employeeId,
+      employeeId: { $regex: searchRegex },
       date: today,
     });
 
