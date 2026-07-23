@@ -4,7 +4,6 @@ import Employee from "../models/Employee.js";
 const generateEmployeeId = () => `EMP-${Math.floor(1000 + Math.random() * 9000)}`;
 
 // Get All Employees
-
 export const getEmployees = async (req, res) => {
   try {
     const {
@@ -26,7 +25,6 @@ export const getEmployees = async (req, res) => {
           { email: { $regex: search, $options: "i" } },
         ];
       } else {
-        
         query.$and = words.map((word) => ({
           $or: [
             { firstName: { $regex: word, $options: "i" } },
@@ -45,7 +43,7 @@ export const getEmployees = async (req, res) => {
       .limit(Number(limit))
       .sort({ createdAt: -1 });
 
-    const formattedEmployees = employees.map(emp => {
+    const formattedEmployees = employees.map((emp) => {
       const obj = emp.toObject();
       if (!obj.visiblePassword) {
         obj.visiblePassword = "Pass1234!";
@@ -62,17 +60,14 @@ export const getEmployees = async (req, res) => {
       totalPages: Math.ceil(totalEmployees / limit),
       data: formattedEmployees,
     });
-
   } catch (error) {
-    console.error(error);
-
+    console.error("getEmployees error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
-
 
 // Update Employee Status
 export const updateEmployeeStatus = async (req, res) => {
@@ -92,15 +87,18 @@ export const updateEmployeeStatus = async (req, res) => {
       });
     }
 
+    const obj = employee.toObject();
+    if (!obj.visiblePassword) {
+      obj.visiblePassword = "Pass1234!";
+    }
+
     res.status(200).json({
       success: true,
       message: "Employee status updated successfully",
-      data: employee,
+      data: obj,
     });
-
   } catch (error) {
-    console.error(error);
-
+    console.error("updateEmployeeStatus error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -108,9 +106,7 @@ export const updateEmployeeStatus = async (req, res) => {
   }
 };
 
-
-
-//get employee by id
+// Get Employee By ID
 export const getEmployeeById = async (req, res) => {
   try {
     const employee = await Employee.findById(req.params.id);
@@ -122,18 +118,20 @@ export const getEmployeeById = async (req, res) => {
       });
     }
 
-    const empObj = employee.toObject();
-    if (!empObj.visiblePassword) {
-      empObj.visiblePassword = "Pass1234!";
+    // Auto-repair missing visiblePassword in DB if legacy document
+    if (!employee.visiblePassword) {
+      employee.visiblePassword = "Pass1234!";
+      await employee.save().catch(() => {});
     }
+
+    const empObj = employee.toObject();
 
     res.status(200).json({
       success: true,
       data: empObj,
     });
   } catch (error) {
-    console.error(error);
-
+    console.error("getEmployeeById error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
@@ -141,9 +139,7 @@ export const getEmployeeById = async (req, res) => {
   }
 };
 
-
 // Create Employee
-
 export const createEmployee = async (req, res) => {
   try {
     const rawPassword = typeof req.body.password === "string" ? req.body.password.trim() : "";
@@ -169,22 +165,16 @@ export const createEmployee = async (req, res) => {
         password: finalPassword,
       },
     });
-
   } catch (error) {
-
-    console.error(error);
-
+    console.error("createEmployee error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
-// ======================================
 // Update Employee
-// ======================================
 export const updateEmployee = async (req, res) => {
   try {
     const updates = { ...req.body };
@@ -214,30 +204,31 @@ export const updateEmployee = async (req, res) => {
       });
     }
 
+    // Ensure visiblePassword persists on the document
+    if (!employee.visiblePassword) {
+      employee.visiblePassword = "Pass1234!";
+      await employee.save().catch(() => {});
+    }
+
+    const empObj = employee.toObject();
+
     res.status(200).json({
       success: true,
       message: "Employee updated successfully",
-      data: employee,
+      data: empObj,
     });
-
   } catch (error) {
-
-    console.error(error);
-
+    console.error("updateEmployee error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };
 
-// ======================================
 // Delete Employee
-// ======================================
 export const deleteEmployee = async (req, res) => {
   try {
-
     const employee = await Employee.findByIdAndDelete(req.params.id);
 
     if (!employee) {
@@ -251,15 +242,11 @@ export const deleteEmployee = async (req, res) => {
       success: true,
       message: "Employee deleted successfully",
     });
-
   } catch (error) {
-
-    console.error(error);
-
+    console.error("deleteEmployee error:", error);
     res.status(500).json({
       success: false,
       message: error.message,
     });
-
   }
 };

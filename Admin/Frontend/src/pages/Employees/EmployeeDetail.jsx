@@ -121,6 +121,9 @@ export default function EmployeeDetail() {
             if (res.success) {
                 toast.success("Employee updated successfully!");
                 setIsEditOpen(false);
+                if (res.data) {
+                    setEmployee(res.data);
+                }
                 fetchEmployeeData();
             } else {
                 toast.error(res.message || "Failed to update employee");
