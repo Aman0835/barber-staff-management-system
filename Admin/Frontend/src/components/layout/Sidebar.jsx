@@ -47,19 +47,17 @@ export default function Sidebar() {
     return (
         <aside className="hidden w-[260px] shrink-0 lg:flex flex-col bg-white border-r border-slate-200 h-full dark:bg-slate-900 dark:border-slate-800">
             {/* Brand Logo */}
-            <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-500/10">
-                    <FiScissors className="text-lg rotate-90" />
-                </div>
+            <Link to="/dashboard" className="flex items-center gap-3.5 px-6 py-4 border-b border-slate-100 dark:border-slate-800 hover:opacity-90 transition">
+                <img src="/favicon.svg" alt="Diva Salon Logo" className="h-9 w-9 shrink-0 dark:invert" />
                 <div>
-                    <h1 className="text-base font-bold text-slate-800 dark:text-slate-100 tracking-wide">
+                    <h1 className="text-base font-light tracking-[0.2em] text-slate-800 dark:text-slate-100 uppercase leading-none">
                         Diva
                     </h1>
-                    <p className="text-[10px] font-semibold text-slate-455 dark:text-slate-500 uppercase tracking-widest leading-none mt-0.5">
-                        The Salon
+                    <p className="text-[9px] font-medium tracking-[0.25em] text-slate-400 dark:text-slate-500 uppercase leading-none mt-1">
+                        Salon
                     </p>
                 </div>
-            </div>
+            </Link>
 
             {/* Navigation Sections */}
             <div className="flex-1 py-6 px-4 space-y-7 overflow-y-auto">

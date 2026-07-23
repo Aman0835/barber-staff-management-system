@@ -45,13 +45,11 @@ export default function Login() {
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2" />
 
                 {/* Logo */}
-                <div className="flex items-center gap-3 relative z-10">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20">
-                        <FiScissors className="text-xl text-white rotate-90" />
-                    </div>
+                <div className="flex items-center gap-3.5 relative z-10">
+                    <img src="/favicon.svg" alt="Diva Salon Logo" className="h-10 w-10 shrink-0 invert" />
                     <div>
-                        <h1 className="text-xl font-bold text-white">Diva</h1>
-                        <p className="text-xs text-blue-200 uppercase tracking-widest">The Salon</p>
+                        <h1 className="text-xl font-light tracking-[0.2em] text-white uppercase leading-none">Diva</h1>
+                        <p className="text-[10px] font-medium tracking-[0.25em] text-blue-200 uppercase leading-none mt-1">Salon</p>
                     </div>
                 </div>
 
@@ -89,13 +87,7 @@ export default function Login() {
                 <div className="w-full max-w-md">
                     {/* Mobile logo */}
                     <div className="lg:hidden flex items-center gap-3 mb-8">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white">
-                            <FiScissors className="text-base rotate-90" />
-                        </div>
-                        <div>
-                            <h1 className="text-base font-bold text-slate-800 dark:text-slate-100">Diva</h1>
-                            <p className="text-[10px] text-slate-400 uppercase tracking-widest">Employee Portal</p>
-                        </div>
+                        <img src="/favicon.svg" alt="Diva Salon Logo" className="h-8 w-auto dark:invert" />
                     </div>
 
                     <h2 className="text-2xl font-extrabold text-slate-800 dark:text-slate-50 tracking-tight">
