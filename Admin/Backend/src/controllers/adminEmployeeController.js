@@ -1,3 +1,4 @@
+import bcrypt from "bcrypt";
 import Employee from "../models/Employee.js";
 
 const generateEmployeeId = () => `EMP-${Math.floor(1000 + Math.random() * 9000)}`;
@@ -173,13 +174,20 @@ export const createEmployee = async (req, res) => {
 // ======================================
 export const updateEmployee = async (req, res) => {
   try {
-    if (req.body.password && typeof req.body.password === "string" && req.body.password.trim()) {
-      req.body.visiblePassword = req.body.password.trim();
+    const updates = { ...req.body };
+
+    if (updates.password && typeof updates.password === "string" && updates.password.trim()) {
+      const plainPassword = updates.password.trim();
+      updates.visiblePassword = plainPassword;
+      updates.password = await bcrypt.hash(plainPassword, 12);
+    } else {
+      delete updates.password;
+      delete updates.visiblePassword;
     }
 
     const employee = await Employee.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updates,
       {
         new: true,
         runValidators: true,
