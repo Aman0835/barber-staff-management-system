@@ -28,7 +28,14 @@ const empAuth = (req, res, next) => {
     }
 };
 
+import { checkIn, checkOut, requestEarlyCheckout } from "../controllers/adminAttendanceController.js";
+
 router.use(empAuth);
+
+// Attendance routes for employee portal
+router.post("/attendance/check-in", checkIn);
+router.post("/attendance/check-out", checkOut);
+router.post("/attendance/request-early-checkout", requestEarlyCheckout);
 
 // GET /api/employee/profile/me — get own profile
 router.get("/profile/me", async (req, res) => {
