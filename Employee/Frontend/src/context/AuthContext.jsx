@@ -9,15 +9,23 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const checkSession = async () => {
+            const token = localStorage.getItem("emp_token");
+            if (!token) {
+                setEmployee(null);
+                setLoading(false);
+                return;
+            }
+
             try {
                 const data = await authService.getMe();
                 if (data && data.success) {
                     setEmployee(data.employee);
                 } else {
+                    localStorage.removeItem("emp_token");
                     setEmployee(null);
                 }
             } catch (error) {
-                // 401 = not logged in — that's expected
+                localStorage.removeItem("emp_token");
                 setEmployee(null);
             } finally {
                 setLoading(false);
@@ -31,10 +39,14 @@ export const AuthProvider = ({ children }) => {
         try {
             const data = await authService.login(emailOrId, password);
             if (data && data.success) {
+                if (data.token) {
+                    localStorage.setItem("emp_token", data.token);
+                }
                 setEmployee(data.employee);
                 return data;
             }
         } catch (error) {
+            localStorage.removeItem("emp_token");
             setEmployee(null);
             throw error;
         } finally {
@@ -49,6 +61,7 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             console.error("Logout failed on server, cleaning client state anyway", error);
         } finally {
+            localStorage.removeItem("emp_token");
             setEmployee(null);
             setLoading(false);
         }
