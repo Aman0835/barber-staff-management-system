@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 180" width="100%" height="100%">
+  <style>
+    .brand-title { font-family: 'Montserrat', 'Helvetica', 'Inter', sans-serif; font-size: 38px; font-weight: 300; fill: #0f172a; letter-spacing: 12px; }
+    .brand-sub { font-family: 'Montserrat', 'Helvetica', 'Inter', sans-serif; font-size: 10px; font-weight: 500; fill: #94a3b8; letter-spacing: 8px; }
+  </style>
+
+  <!-- Logo Mark -->
+  <g transform="translate(60, 30)">
+    <!-- Thin Ring Outer -->
+    <circle cx="60" cy="60" r="54" fill="none" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Minimalist Scissors -->
+    <!-- Pivot Dot -->
+    <circle cx="60" cy="60" r="3" fill="#0f172a" />
+    <!-- Blade Line Left -->
+    <line x1="40" y1="35" x2="80" y2="85" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
+    <!-- Blade Line Right -->
+    <line x1="80" y1="35" x2="40" y2="85" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
+    <!-- Minimal Rings -->
+    <circle cx="37" cy="89" r="6" fill="none" stroke="#0f172a" stroke-width="1.5" />
+    <circle cx="83" cy="89" r="6" fill="none" stroke="#0f172a" stroke-width="1.5" />
+  </g>
+
+  <!-- Typography -->
+  <text x="210" y="88" class="brand-title">DIVA</text>
+  <text x="213" y="112" class="brand-sub">SALON</text>
+</svg>
