@@ -610,34 +610,32 @@ export default function Employees() {
                   </div>
                   <div>
                     <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">
-                      Monthly Base Salary ($)
+                      Monthly Base Salary (₹)
                     </label>
                     <input
                       type="number"
                       required
                       value={monthlySalary}
                       onChange={(e) => setMonthlySalary(e.target.value)}
-                      placeholder="4500"
+                      placeholder="25000"
                       className="w-full h-10 mt-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150"
                     />
                   </div>
                 </div>
 
-                {formMode === "create" && (
-                  <div>
-                    <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Password for system log-ins"
-                      className="w-full h-10 mt-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150"
-                    />
-                  </div>
-                )}
+                <div>
+                  <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">
+                    Employee Login Password
+                  </label>
+                  <input
+                    type="text"
+                    required={formMode === "create"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={formMode === "create" ? "Set password for employee login" : "Enter new password to reset..."}
+                    className="w-full h-10 mt-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3 text-xs text-slate-800 outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150"
+                  />
+                </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>

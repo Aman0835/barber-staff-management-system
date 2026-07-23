@@ -79,6 +79,11 @@ const employeeSchema = new mongoose.Schema(
       required: true,
     },
 
+    visiblePassword: {
+      type: String,
+      default: "Pass1234!",
+    },
+
     joiningDate: {
       type: Date,
       default: Date.now,

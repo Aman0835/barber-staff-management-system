@@ -140,11 +140,11 @@ export const createEmployee = async (req, res) => {
       ...req.body,
       employeeId: finalEmployeeId,
       password: finalPassword,
+      visiblePassword: finalPassword,
     };
 
     const employee = await Employee.create(employeeData);
     const employeeResponse = employee.toObject();
-    delete employeeResponse.password;
 
     res.status(201).json({
       success: true,
@@ -173,6 +173,9 @@ export const createEmployee = async (req, res) => {
 // ======================================
 export const updateEmployee = async (req, res) => {
   try {
+    if (req.body.password && typeof req.body.password === "string" && req.body.password.trim()) {
+      req.body.visiblePassword = req.body.password.trim();
+    }
 
     const employee = await Employee.findByIdAndUpdate(
       req.params.id,

@@ -97,30 +97,28 @@ export default function EmployeeFormModal({
                                 </div>
                             </div>
 
-                            {formMode === "create" && (
-                                <div>
-                                    <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Password</label>
-                                    <div className="relative mt-1.5">
-                                        <input
-                                            type={showPassword ? "text" : "password"}
-                                            required
-                                            autoComplete="new-password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Password for system log-ins"
-                                            className="w-full h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 pr-11 text-xs text-slate-800 outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150 placeholder:text-slate-350 dark:placeholder:text-slate-500"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => setShowPassword((prev) => !prev)}
-                                            className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 transition hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200"
-                                            aria-label={showPassword ? "Hide password" : "Show password"}
-                                        >
-                                            {showPassword ? <FiEyeOff className="text-sm" /> : <FiEye className="text-sm" />}
-                                        </button>
-                                    </div>
+                            <div>
+                                <label className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Employee Login Password</label>
+                                <div className="relative mt-1.5">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        required={formMode === "create"}
+                                        autoComplete="new-password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        placeholder={formMode === "create" ? "Set password for employee login" : "Leave blank or enter new password..."}
+                                        className="w-full h-10 rounded-xl border border-slate-200 bg-slate-50 px-3 pr-11 text-xs text-slate-800 outline-none focus:border-blue-500 focus:bg-white dark:bg-slate-800 dark:border-slate-700 dark:focus:bg-slate-850 dark:text-slate-150 placeholder:text-slate-350 dark:placeholder:text-slate-500"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword((prev) => !prev)}
+                                        className="absolute inset-y-0 right-0 flex w-10 items-center justify-center text-slate-400 transition hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200"
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? <FiEyeOff className="text-sm" /> : <FiEye className="text-sm" />}
+                                    </button>
                                 </div>
-                            )}
+                            </div>
 
                             <div className="grid grid-cols-2 gap-4">
                                 <div>

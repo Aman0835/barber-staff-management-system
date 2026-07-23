@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FiArrowLeft, FiEdit2, FiTrash2, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import { FiArrowLeft, FiEdit2, FiTrash2, FiCheckCircle, FiXCircle, FiEye, FiEyeOff } from "react-icons/fi";
 import toast from "react-hot-toast";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import * as employeeService from "../../services/employeeService";
@@ -28,6 +28,7 @@ export default function EmployeeDetail() {
     const [employee, setEmployee] = useState(null);
     const [logs, setLogs] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         const load = async () => {
@@ -178,6 +179,22 @@ export default function EmployeeDetail() {
                     <div className="panel-surface rounded-3xl p-6 shadow-sm">
                         <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-4">Employment Details</h3>
                         {infoRow("Employee Code", employee.employeeId)}
+                        <div className="flex justify-between items-center py-2.5 border-b border-slate-100 dark:border-slate-800">
+                            <span className="text-xs text-slate-400 dark:text-slate-500">Login Password</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs font-mono font-bold text-blue-600 dark:text-blue-400">
+                                    {showPassword ? (employee.visiblePassword || "Pass1234!") : "••••••••"}
+                                </span>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(prev => !prev)}
+                                    className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition"
+                                    title={showPassword ? "Hide password" : "Show password"}
+                                >
+                                    {showPassword ? <FiEyeOff className="text-xs" /> : <FiEye className="text-xs" />}
+                                </button>
+                            </div>
+                        </div>
                         {infoRow("Role", employee.role)}
                         {infoRow("Status", employee.status)}
                         {infoRow("Joining Date", employee.joiningDate ? new Date(employee.joiningDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : null)}
