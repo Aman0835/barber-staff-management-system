@@ -17,27 +17,4 @@ export default defineConfig({
       },
     },
   },
-  build: {
-    target: 'esnext',
-    cssCodeSplit: true,
-    minify: 'esbuild',
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-              return 'react-vendor';
-            }
-            if (id.includes('framer-motion')) {
-              return 'framer';
-            }
-            if (id.includes('react-icons')) {
-              return 'icons';
-            }
-            return 'vendor';
-          }
-        },
-      },
-    },
-  },
 })
